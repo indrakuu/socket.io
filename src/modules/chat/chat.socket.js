@@ -1,11 +1,11 @@
-module.exports = (socket) => {
-    socket.on("join_room", (room) => {
+module.exports = (io, socket) => {
+    socket.on("chat_join", (room) => {
         socket.join(room);
-        console.log(`User ${socket.id} joined room ${room}`);
-        socket.emit("joined", `Kamu telah bergabung ke room: ${room}`);
+        console.log(`User ${socket.id} joined chat ${room}`);
+        socket.emit("joined", `Kamu telah bergabung ke chat: ${room}`);
     });
 
-    socket.on("send_message", ({ room, sender, message }) => {
+    socket.on("chat_send", ({ room, sender, message }) => {
         if (!room || !sender || !message) {
             console.log("Data tidak lengkap.");
             return;
@@ -13,12 +13,12 @@ module.exports = (socket) => {
 
         console.log(`Pesan dari ${sender} ke room ${room}: ${message}`);
 
-        io.to(room).emit("receive_message", { sender, message, room: room });
+        io.to(room).emit("chat_receive", { sender, message, room: room });
 
         console.log(`Pesan telah dikirim ke room ${room}`);
     });
 
-    socket.on("leave_room", (room) => {
+    socket.on("chat_leave", (room) => {
         socket.leave(room);
         console.log(`User ${socket.id} left room ${room}`);
     });
